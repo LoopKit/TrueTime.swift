@@ -23,6 +23,10 @@ public final class ReferenceTime: NSObject {
     @objc public var time: Date { return underlyingValue.time }
     @objc public var uptime: timeval { return underlyingValue.uptime }
     @objc public func now() -> Date { return underlyingValue.now() }
+    @objc public var host: String? { return (underlyingValue as? FrozenNetworkTime)?.host }
+    public var roundTripDelay: TimeInterval? {
+        return (underlyingValue as? FrozenNetworkTime).map { TimeInterval(milliseconds: $0.serverResponse.delay) }
+    }
 
     public convenience init(time: Date, uptime: timeval) {
         self.init(FrozenReferenceTime(time: time, uptime: uptime))
