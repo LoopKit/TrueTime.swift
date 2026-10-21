@@ -242,6 +242,13 @@ private extension NTPConnection {
                 return
             }
 
+            // Read late (e.g. the app was suspended), the offset would be off by half the delay.
+            guard response.delay <= Int64(self.timeout * 1000) else {
+                self.debugLog("Discarding reply with round-trip delay \(response.delay) ms")
+                self.complete(.failure(NSError(trueTimeError: .badServerResponse)))
+                return
+            }
+
             self.debugLog("Buffer \(self.address) has read data!")
             self.debugLog("Start time: \(startTime.milliseconds) ms, " +
                           "response: \(packet.timeDescription)")
