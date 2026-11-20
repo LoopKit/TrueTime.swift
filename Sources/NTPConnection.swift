@@ -92,6 +92,9 @@ final class NTPConnection {
 
             if let socket = self.socket {
                 CFSocketSetSocketFlags(socket, kCFSocketCloseOnInvalidate)
+                var noSigPipe: Int32 = 1
+                setsockopt(CFSocketGetNative(socket), SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe,
+                           socklen_t(MemoryLayout<Int32>.size))
                 self.source = CFSocketCreateRunLoopSource(nil, socket, 0)
             }
 
